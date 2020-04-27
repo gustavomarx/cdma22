@@ -37,7 +37,7 @@ class DBProvider {
 
   newCliente(Cliente newCliente) async {
     final db = await database;
-    //get the biggest id in the table
+    //get the biggest id in the tables
     var table = await db.rawQuery("SELECT MAX(id)+1 as id FROM Cliente");
     int id = table.first["id"];
     //insert to the table using the new id
@@ -102,3 +102,4 @@ class DBProvider {
     db.rawDelete("Delete from Cliente");
   }
 }
+

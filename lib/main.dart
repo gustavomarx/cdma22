@@ -16,12 +16,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   // data for testing
-  List<Cliente> testClients = [
-    Cliente(nome: "Dick", sobrenome: "Vigarista", marcado: false),
-    Cliente(nome: "Penélope", sobrenome: "Charmosa", marcado: true),
-    Cliente(nome: "Medinho", sobrenome: "Beltrano", marcado: false),
-    Cliente(nome: "Muttley", sobrenome: "Siclano", marcado: false),
-  ];
+  List<Cliente> testClients = [];
 
   @override
   Widget build(BuildContext context) {
@@ -73,12 +68,74 @@ class _MyAppState extends State<MyApp> {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: () async {
-          Cliente rnd = testClients[math.Random().nextInt(testClients.length)];
-          await DBProvider.db.newCliente(rnd);
+        onPressed: () {
+          _addCliente(context);
           setState(() {});
         },
       ),
     );
   }
+}
+
+String _cliente;
+String _sobrenome;
+void _addCliente(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      var alertDialog = AlertDialog(
+        title: Text("Adicionar cliente"),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              TextField(
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    labelText: "Nome do cliente",
+                    hintText: "João",
+                  ),
+                  onChanged: (valor) {
+                    _cliente = valor;
+                  }),
+              TextField(
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    labelText: "Sobrenome do cliente",
+                    hintText: "da Silva",
+                  ),
+                  onChanged: (valor) {
+                    _sobrenome = valor;
+                  }),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () {
+              _salvarCliente();
+              Navigator.of(context).pop();
+            },
+            child: Text("Incluir"),
+          ),
+          FlatButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text("Cancelar"),
+          ),
+        ],
+      );
+      return alertDialog;
+    },
+  );
+}
+
+_salvarCliente() async {
+  Cliente cliente = Cliente(
+    nome: _cliente,
+    sobrenome: _sobrenome,
+    marcado: false,
+  );
+
+  await DBProvider.db.newCliente(cliente);
+
+  
 }
